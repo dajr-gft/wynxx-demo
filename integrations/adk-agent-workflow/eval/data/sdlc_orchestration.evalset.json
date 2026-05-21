@@ -1,0 +1,44 @@
+{
+  "eval_set_id": "sdlc_orchestration_evalset",
+  "name": "SDLC orchestration — smoke evalset",
+  "description": "Verifies the workflow analyzes a repo and fans out to documentation, tests, and modernization before the human-in-the-loop gate.",
+  "eval_cases": [
+    {
+      "eval_id": "analyze-and-fan-out",
+      "conversation": [
+        {
+          "invocation_id": "inv-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "Run an SDLC assessment on the payments-service repository, then draft documentation, tests, and a modernization plan."
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "Analysis complete. Drafted architecture and API docs, test recommendations, and a modernization assessment. Awaiting approval before publishing."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              { "name": "analyze_repository", "args": { "repository_path": "payments-service" } },
+              { "name": "generate_documentation_draft", "args": { "repository_path": "payments-service" } },
+              { "name": "generate_tests", "args": { "repository_path": "payments-service" } },
+              { "name": "modernization_assessment", "args": { "repository_path": "payments-service" } }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "sdlc_workflow",
+        "user_id": "eval-user",
+        "state": { "repository_path": "payments-service" }
+      }
+    }
+  ]
+}

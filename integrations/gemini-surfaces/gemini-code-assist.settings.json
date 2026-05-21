@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "wynxx": {
+      "httpUrl": "https://wynxx-mcp-server-xxxxx.run.app/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": ["https://www.googleapis.com/auth/cloud-platform"]
+      },
+      "timeout": 300000,
+      "trust": false,
+      "includeTools": [
+        "analyze_repository",
+        "explain_code",
+        "generate_documentation_draft",
+        "modernization_assessment",
+        "generate_tests",
+        "review_code"
+      ]
+    }
+  }
+}

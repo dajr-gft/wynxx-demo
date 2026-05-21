@@ -1,0 +1,7 @@
+# Optional OpenTelemetry stack for the Wynxx MCP server.
+# Enable at runtime with WYNXX_ENABLE_OTEL=true.
+# On Google Cloud, the OTLP exporter is collected by the Cloud Run / GKE
+# OpenTelemetry sidecar or the Google Cloud OTLP endpoint.
+
+opentelemetry-sdk>=1.27,<2.0
+opentelemetry-exporter-otlp-proto-grpc>=1.27,<2.0

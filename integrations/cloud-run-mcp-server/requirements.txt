@@ -1,0 +1,15 @@
+# Path A — Custom MCP server on Cloud Run
+# Pinned to minor versions; bump deliberately.
+
+# Model Context Protocol — official Python SDK (provides mcp.server.fastmcp)
+mcp>=1.12,<2.0
+
+# Typed schemas and settings
+pydantic>=2.7,<3.0
+pydantic-settings>=2.3,<3.0
+
+# HTTP client for the optional real Wynxx backend
+httpx>=0.27,<1.0
+
+# --- Optional: OpenTelemetry tracing (enabled with WYNXX_ENABLE_OTEL=true) ---
+# Install with:  pip install -r requirements.txt -r requirements-otel.txt

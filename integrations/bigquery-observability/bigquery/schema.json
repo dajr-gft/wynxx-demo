@@ -1,0 +1,16 @@
+[
+  { "name": "execution_id", "type": "STRING", "mode": "REQUIRED", "description": "Unique id for this tool invocation." },
+  { "name": "agent_identity", "type": "STRING", "mode": "NULLABLE", "description": "mTLS persona of the calling agent." },
+  { "name": "user_id", "type": "STRING", "mode": "NULLABLE", "description": "End user on whose behalf the call was made." },
+  { "name": "tenant_id", "type": "STRING", "mode": "NULLABLE", "description": "Tenant / client partition." },
+  { "name": "repository", "type": "STRING", "mode": "NULLABLE", "description": "Repository the tool acted on." },
+  { "name": "tool", "type": "STRING", "mode": "REQUIRED", "description": "Fully-qualified tool name." },
+  { "name": "mcp_server", "type": "STRING", "mode": "REQUIRED", "description": "Logical MCP server id." },
+  { "name": "backend_mode", "type": "STRING", "mode": "NULLABLE", "description": "stub or real." },
+  { "name": "status", "type": "STRING", "mode": "REQUIRED", "description": "success | partial | failed." },
+  { "name": "duration_ms", "type": "INTEGER", "mode": "REQUIRED", "description": "Wall-clock execution time." },
+  { "name": "model_armor_verdict", "type": "STRING", "mode": "NULLABLE", "description": "allow | block | not_evaluated." },
+  { "name": "artifacts", "type": "STRING", "mode": "REPEATED", "description": "Artifacts produced or referenced." },
+  { "name": "trace_id", "type": "STRING", "mode": "REQUIRED", "description": "OpenTelemetry trace id." },
+  { "name": "timestamp", "type": "TIMESTAMP", "mode": "REQUIRED", "description": "UTC completion time." }
+]

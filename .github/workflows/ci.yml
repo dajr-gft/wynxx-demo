@@ -1,0 +1,84 @@
+name: integrations-ci
+
+on:
+  push:
+    paths:
+      - "integrations/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "integrations/**"
+      - ".github/workflows/ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cloud-run-mcp-server:
+    name: Path A — MCP server (lint + tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: integrations/cloud-run-mcp-server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt ".[dev]"
+      - run: ruff check .
+      - run: pytest
+
+  adk-agent-workflow:
+    name: ADK workflow (lint + tests + eval)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: integrations/adk-agent-workflow
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt ".[dev]"
+      - run: ruff check .
+      - run: pytest tests
+      - run: pytest eval
+
+  openapi:
+    name: Path B — OpenAPI spec validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openapi-spec-validator
+      - run: openapi-spec-validator integrations/apigee-mcp-bridge/wynxx-openapi.yaml
+
+  json-schema:
+    name: Observability — execution record schema
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install check-jsonschema
+      - name: Validate execution records against the schema
+        run: |
+          check-jsonschema \
+            --schemafile integrations/bigquery-observability/execution-metadata.schema.json \
+            integrations/bigquery-observability/execution-metadata.example.json \
+            integrations/sdlc-package/execution-metadata.json
+
+  shellcheck:
+    name: Shell scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck
+        run: |
+          sudo apt-get update && sudo apt-get install -y shellcheck
+          find integrations -name "*.sh" -print0 | xargs -0 shellcheck --severity=warning

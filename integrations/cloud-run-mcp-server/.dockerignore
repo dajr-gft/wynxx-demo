@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+tests/
+*.md
+.env
+.env.*
+!.env.example
+.git/
+.github/
+.idea/

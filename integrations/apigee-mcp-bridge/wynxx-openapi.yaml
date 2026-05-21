@@ -1,0 +1,419 @@
+# Wynxx SDLC API — OpenAPI 3.1 specification.
+#
+# This is the contract Apigee turns into MCP tools. When you create an MCP
+# proxy and attach this spec, Apigee uses each documented `operationId` as a
+# tool name and the request/response schemas as the tool's input/output schema.
+# No code changes, no MCP server to operate.
+#
+# The six operations mirror the Path A tool contract exactly, so a client sees
+# the same tools regardless of which path serves them.
+openapi: 3.1.0
+
+info:
+  title: Wynxx SDLC API
+  version: 1.0.0
+  description: >-
+    Enterprise SDLC automation tools (repository analysis, documentation, test
+    generation, modernization, and code review) exposed as governed MCP tools
+    through Apigee.
+  contact:
+    name: GFT — Google Cloud Practice
+  license:
+    name: Apache-2.0
+
+servers:
+  # The live REST backend Apigee proxies. Apigee mediates MCP <-> REST.
+  - url: https://api.wynxx.example.com/v1
+    description: Wynxx SDLC backend (behind Apigee)
+
+security:
+  - oauth2: []
+
+tags:
+  - name: read-only
+    description: Observe and describe; safest to approve.
+  - name: advisory
+    description: Influence engineering decisions and draft artifacts.
+
+paths:
+  /analyze:
+    post:
+      operationId: analyze_repository
+      tags: [read-only]
+      summary: Analyze a repository and return an enterprise SDLC assessment.
+      description: >-
+        Returns a structured assessment: summary, severity-tagged findings,
+        recommended actions, risks, and artifact references.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeRequest'
+      responses:
+        '200':
+          description: Structured SDLC assessment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepositoryAnalysis'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /explain:
+    post:
+      operationId: explain_code
+      tags: [read-only]
+      summary: Explain a file or symbol with a plain-language walkthrough.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExplainRequest'
+      responses:
+        '200':
+          description: Code explanation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeExplanation'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /generate-documentation:
+    post:
+      operationId: generate_documentation_draft
+      tags: [read-only]
+      summary: Draft architecture, API, or onboarding documentation for review.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentationRequest'
+      responses:
+        '200':
+          description: Documentation draft.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentationDraft'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /modernization-assessment:
+    post:
+      operationId: modernization_assessment
+      tags: [advisory]
+      summary: Assess modernization readiness and propose a target architecture.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModernizationRequest'
+      responses:
+        '200':
+          description: Modernization assessment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModernizationAssessment'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /generate-tests:
+    post:
+      operationId: generate_tests
+      tags: [advisory]
+      summary: Draft or recommend unit and integration tests.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateTestsRequest'
+      responses:
+        '200':
+          description: Generated artifacts and warnings.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestGenerationResult'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /review:
+    post:
+      operationId: review_code
+      tags: [advisory]
+      summary: Perform a static, advisory code review against a ruleset.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+      responses:
+        '200':
+          description: Review findings.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeReviewResult'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth 2.1 / OIDC, enforced by Apigee.
+      flows:
+        clientCredentials:
+          tokenUrl: https://oauth2.googleapis.com/token
+          scopes:
+            'https://www.googleapis.com/auth/cloud-platform': Full access to Wynxx tools.
+
+  responses:
+    BadRequest:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid credentials.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    # --- Shared --------------------------------------------------------------
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string, example: invalid_argument }
+        message: { type: string }
+
+    Severity:
+      type: string
+      enum: [info, low, medium, high, critical]
+
+    ExecutionStatus:
+      type: string
+      enum: [success, partial, failed]
+
+    ExecutionMetadata:
+      type: object
+      description: Traceable execution record embedded in every response.
+      required: [execution_id, tool, mcp_server, duration_ms, trace_id, timestamp]
+      properties:
+        execution_id: { type: string, example: exec-9f2c1a3b }
+        tool: { type: string, example: wynxx.analyze_repository }
+        mcp_server: { type: string, example: wynxx-sdlc }
+        backend_mode: { type: string, example: real }
+        status: { $ref: '#/components/schemas/ExecutionStatus' }
+        duration_ms: { type: integer, minimum: 0 }
+        model_armor_verdict:
+          type: string
+          enum: [allow, block, not_evaluated]
+        trace_id: { type: string }
+        timestamp: { type: string, format: date-time }
+
+    Finding:
+      type: object
+      required: [title, detail]
+      properties:
+        title: { type: string }
+        detail: { type: string }
+        severity: { $ref: '#/components/schemas/Severity' }
+        category: { type: string, example: architecture }
+
+    Artifact:
+      type: object
+      required: [name, kind]
+      properties:
+        name: { type: string }
+        kind: { type: string, example: report }
+        uri: { type: [string, 'null'], example: 'gs://bucket/report.json' }
+
+    # --- Requests ------------------------------------------------------------
+    AnalyzeRequest:
+      type: object
+      required: [repository_path]
+      properties:
+        repository_path: { type: string }
+        language: { type: string, default: java }
+        depth: { type: string, default: standard, enum: [shallow, standard, deep] }
+
+    ExplainRequest:
+      type: object
+      required: [repository_path, file_path]
+      properties:
+        repository_path: { type: string }
+        file_path: { type: string }
+        symbol: { type: [string, 'null'] }
+        language: { type: string, default: java }
+
+    DocumentationRequest:
+      type: object
+      required: [repository_path]
+      properties:
+        repository_path: { type: string }
+        doc_type: { type: string, default: architecture, enum: [architecture, api, onboarding] }
+        language: { type: string, default: java }
+        audience: { type: string, default: engineering }
+
+    ModernizationRequest:
+      type: object
+      required: [repository_path]
+      properties:
+        repository_path: { type: string }
+        language: { type: string, default: java }
+        target_platform: { type: string, default: cloud_run, enum: [cloud_run, gke] }
+
+    GenerateTestsRequest:
+      type: object
+      required: [repository_path]
+      properties:
+        repository_path: { type: string }
+        language: { type: string, default: java }
+        test_framework: { type: string, default: junit }
+        coverage_target: { type: integer, default: 80, minimum: 0, maximum: 100 }
+
+    ReviewRequest:
+      type: object
+      required: [repository_path]
+      properties:
+        repository_path: { type: string }
+        file_path: { type: [string, 'null'] }
+        ruleset: { type: string, default: enterprise-default }
+        language: { type: string, default: java }
+
+    # --- Responses -----------------------------------------------------------
+    RepositoryAnalysis:
+      type: object
+      required: [repository_path, summary, metadata]
+      properties:
+        repository_path: { type: string }
+        language: { type: string }
+        depth: { type: string }
+        summary: { type: string }
+        findings: { type: array, items: { $ref: '#/components/schemas/Finding' } }
+        recommended_actions: { type: array, items: { type: string } }
+        risks: { type: array, items: { $ref: '#/components/schemas/Finding' } }
+        artifacts: { type: array, items: { $ref: '#/components/schemas/Artifact' } }
+        metadata: { $ref: '#/components/schemas/ExecutionMetadata' }
+
+    CodeExplanation:
+      type: object
+      required: [repository_path, file_path, summary, metadata]
+      properties:
+        repository_path: { type: string }
+        file_path: { type: string }
+        symbol: { type: [string, 'null'] }
+        language: { type: string }
+        summary: { type: string }
+        walkthrough: { type: array, items: { type: string } }
+        key_components: { type: array, items: { type: string } }
+        dependencies: { type: array, items: { type: string } }
+        complexity: { $ref: '#/components/schemas/Severity' }
+        metadata: { $ref: '#/components/schemas/ExecutionMetadata' }
+
+    DocumentationSection:
+      type: object
+      required: [heading, content]
+      properties:
+        heading: { type: string }
+        content: { type: string }
+
+    DocumentationDraft:
+      type: object
+      required: [repository_path, doc_type, title, metadata]
+      properties:
+        repository_path: { type: string }
+        doc_type: { type: string }
+        title: { type: string }
+        audience: { type: string }
+        format: { type: string, default: markdown }
+        sections: { type: array, items: { $ref: '#/components/schemas/DocumentationSection' } }
+        warnings: { type: array, items: { type: string } }
+        status: { $ref: '#/components/schemas/ExecutionStatus' }
+        metadata: { $ref: '#/components/schemas/ExecutionMetadata' }
+
+    MigrationPhase:
+      type: object
+      required: [name, objective, effort]
+      properties:
+        name: { type: string }
+        objective: { type: string }
+        effort: { type: string, example: M }
+
+    ModernizationAssessment:
+      type: object
+      required: [repository_path, current_state, target_architecture, recommendation, metadata]
+      properties:
+        repository_path: { type: string }
+        language: { type: string }
+        target_platform: { type: string }
+        current_state: { type: string }
+        target_architecture: { type: string }
+        findings: { type: array, items: { $ref: '#/components/schemas/Finding' } }
+        risks: { type: array, items: { $ref: '#/components/schemas/Finding' } }
+        migration_phases: { type: array, items: { $ref: '#/components/schemas/MigrationPhase' } }
+        effort_estimate: { type: string }
+        recommendation: { type: string }
+        metadata: { $ref: '#/components/schemas/ExecutionMetadata' }
+
+    GeneratedFile:
+      type: object
+      required: [path, summary]
+      properties:
+        path: { type: string }
+        kind: { type: string, default: test }
+        summary: { type: string }
+
+    TestGenerationResult:
+      type: object
+      required: [repository_path, test_framework, coverage_target, metadata]
+      properties:
+        repository_path: { type: string }
+        language: { type: string }
+        test_framework: { type: string }
+        coverage_target: { type: integer, minimum: 0, maximum: 100 }
+        generated_files: { type: array, items: { $ref: '#/components/schemas/GeneratedFile' } }
+        recommendations: { type: array, items: { type: string } }
+        warnings: { type: array, items: { type: string } }
+        status: { $ref: '#/components/schemas/ExecutionStatus' }
+        metadata: { $ref: '#/components/schemas/ExecutionMetadata' }
+
+    ReviewFinding:
+      type: object
+      required: [file_path, rule, message]
+      properties:
+        file_path: { type: string }
+        line: { type: [integer, 'null'] }
+        severity: { $ref: '#/components/schemas/Severity' }
+        rule: { type: string }
+        message: { type: string }
+        suggestion: { type: [string, 'null'] }
+
+    CodeReviewResult:
+      type: object
+      required: [repository_path, ruleset, metadata]
+      properties:
+        repository_path: { type: string }
+        language: { type: string }
+        ruleset: { type: string }
+        findings: { type: array, items: { $ref: '#/components/schemas/ReviewFinding' } }
+        severity_summary:
+          type: object
+          additionalProperties: { type: integer }
+        recommendations: { type: array, items: { type: string } }
+        warnings: { type: array, items: { type: string } }
+        status: { $ref: '#/components/schemas/ExecutionStatus' }
+        metadata: { $ref: '#/components/schemas/ExecutionMetadata' }

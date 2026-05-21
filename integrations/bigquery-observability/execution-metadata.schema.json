@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gft.com/wynxx/execution-metadata.schema.json",
+  "title": "Wynxx SDLC execution record",
+  "description": "One record per MCP tool execution. The MCP server emits the tool-level subset; Agent Gateway and the orchestration layer enrich it with identity, tenant, and artifact context before it is streamed to BigQuery.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "execution_id",
+    "tool",
+    "mcp_server",
+    "status",
+    "duration_ms",
+    "trace_id",
+    "timestamp"
+  ],
+  "properties": {
+    "execution_id": {
+      "type": "string",
+      "description": "Unique id for this tool invocation.",
+      "examples": ["exec-12345"]
+    },
+    "agent_identity": {
+      "type": "string",
+      "description": "mTLS-secured persona of the calling agent (added by Agent Gateway).",
+      "examples": ["sdlc-orchestrator-agent"]
+    },
+    "user_id": {
+      "type": "string",
+      "description": "End user on whose behalf the call was made."
+    },
+    "tenant_id": {
+      "type": "string",
+      "description": "Tenant / client partition for multi-tenant deployments."
+    },
+    "repository": {
+      "type": "string",
+      "description": "Repository the tool acted on."
+    },
+    "tool": {
+      "type": "string",
+      "description": "Fully-qualified tool name.",
+      "examples": ["wynxx.analyze_repository"]
+    },
+    "mcp_server": {
+      "type": "string",
+      "description": "Logical MCP server id from Agent Registry.",
+      "examples": ["wynxx-sdlc"]
+    },
+    "backend_mode": {
+      "type": "string",
+      "enum": ["stub", "real"],
+      "description": "Whether the call hit the stub or the live backend."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "partial", "failed"]
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "model_armor_verdict": {
+      "type": "string",
+      "enum": ["allow", "block", "not_evaluated"],
+      "description": "Verdict from Model Armor at the gateway."
+    },
+    "artifacts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Artifacts produced or referenced by the execution."
+    },
+    "trace_id": {
+      "type": "string",
+      "description": "W3C / OpenTelemetry trace id for the full call chain."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC completion time, ISO 8601."
+    }
+  }
+}

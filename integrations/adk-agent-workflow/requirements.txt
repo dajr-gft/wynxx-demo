@@ -1,0 +1,6 @@
+# ADK SDLC workflow — base dependencies (stub/local runtime + tests).
+pydantic>=2.7,<3.0
+pydantic-settings>=2.3,<3.0
+
+# For real ADK agents + Agent Engine deploy, also install:
+#   pip install -r requirements-real.txt

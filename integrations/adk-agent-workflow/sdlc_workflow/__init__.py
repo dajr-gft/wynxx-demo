@@ -1,0 +1,20 @@
+# Copyright 2026 GFT Technologies SE.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""SDLC orchestration workflow — ADK 2.0 graph consuming the Wynxx MCP server."""
+
+from .agent import root_agent, run_workflow, sdlc_workflow
+
+__all__ = ["root_agent", "run_workflow", "sdlc_workflow"]
+__version__ = "1.0.0"

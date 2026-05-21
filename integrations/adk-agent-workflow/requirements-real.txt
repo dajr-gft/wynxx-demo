@@ -1,0 +1,5 @@
+# Real ADK 2.0 runtime: builds true agents that call the Wynxx MCP server via
+# McpToolset, and enables `adk deploy agent_engine`.
+#
+# Enable with SDLC_MODE=real after installing.
+google-adk>=2.0

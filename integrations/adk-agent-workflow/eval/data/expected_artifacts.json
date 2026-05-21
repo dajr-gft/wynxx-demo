@@ -1,0 +1,10 @@
+{
+  "repository_path": "payments-service",
+  "artifacts": [
+    "api-overview.md",
+    "architecture-summary.md",
+    "migration-plan-gcp.md",
+    "modernization-assessment.md",
+    "test-recommendations.md"
+  ]
+}

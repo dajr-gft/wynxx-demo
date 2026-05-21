@@ -1,0 +1,13 @@
+1{
+  "mcpServers": {
+    "wynxx": {
+      "command": "npx",
+      "args": ["-y", "@wynxx/mcp", "--instance", "34.71.69.43.nip.io"],
+      "env": {
+        "npm_config_@wynxx:registry": "https://pkgs.dev.azure.com/gft-assets/ai-impact-feed/_packaging/ai-impact-feed/npm/registry/"
+      },
+      "timeout": 60000,
+      "trust": false
+    }
+  }
+}

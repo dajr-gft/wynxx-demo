@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F6F9FC"/>
+      <stop offset="100%" stop-color="#E8F0F7"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#CFE3F2"/>
+      <stop offset="100%" stop-color="#7FB2D9"/>
+    </linearGradient>
+    <linearGradient id="iceTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#DCEBF6"/>
+    </linearGradient>
+    <linearGradient id="iceBottom" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#BCDAEF"/>
+      <stop offset="100%" stop-color="#5E94BD"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="220" fill="url(#sky)"/>
+  <rect y="220" width="1280" height="580" fill="url(#water)"/>
+
+  <!-- Waterline -->
+  <line x1="0" y1="220" x2="1280" y2="220" stroke="#3A6E94" stroke-width="2" stroke-dasharray="6 4" opacity="0.6"/>
+
+  <!-- Iceberg top (visible 30%) -->
+  <polygon points="540,220 600,115 680,85 760,115 820,220" fill="url(#iceTop)" stroke="#94B9D2" stroke-width="1.5"/>
+  <polygon points="600,115 660,155 680,85" fill="#FFFFFF" opacity="0.6"/>
+
+  <!-- Iceberg bottom (hidden 70%) -->
+  <polygon points="540,220 400,360 360,500 420,640 580,720 820,720 940,640 980,500 920,360 820,220"
+           fill="url(#iceBottom)" stroke="#5E94BD" stroke-width="1.5"/>
+  <polygon points="540,220 460,340 540,400 600,300" fill="#FFFFFF" opacity="0.18"/>
+  <polygon points="820,220 880,360 820,440 760,340" fill="#FFFFFF" opacity="0.12"/>
+
+  <!-- Tip label (30%) -->
+  <text x="680" y="78" text-anchor="middle" font-size="32" font-weight="700" fill="#1B3A52">30%</text>
+  <text x="930" y="135" font-size="17" font-weight="600" fill="#1B3A52">What coding assistants address</text>
+  <text x="930" y="158" font-size="14" fill="#3A5A75">Autocomplete · snippet generation</text>
+  <text x="930" y="178" font-size="14" fill="#3A5A75">In-IDE refactoring · inline tests</text>
+  <line x1="780" y1="115" x2="920" y2="130" stroke="#1B3A52" stroke-width="1.5" opacity="0.55"/>
+
+  <!-- Center 70% label -->
+  <text x="685" y="500" text-anchor="middle" font-size="80" font-weight="800" fill="#FFFFFF" opacity="0.92">70%</text>
+  <text x="685" y="540" text-anchor="middle" font-size="18" font-weight="700" fill="#FFFFFF" opacity="0.92">where enterprise SDLC budget actually goes</text>
+
+  <!-- Underwater callouts -->
+  <g font-size="15" fill="#1B3A52">
+    <!-- Left side callouts -->
+    <g>
+      <line x1="200" y1="300" x2="400" y2="340" stroke="#1B3A52" stroke-width="1.2" opacity="0.5"/>
+      <text x="40" y="296" font-weight="700">Legacy modernization</text>
+      <text x="40" y="316" font-size="13" fill="#3A5A75">COBOL · monolith decomposition</text>
+    </g>
+    <g>
+      <line x1="200" y1="460" x2="370" y2="470" stroke="#1B3A52" stroke-width="1.2" opacity="0.5"/>
+      <text x="40" y="456" font-weight="700">Requirements translation</text>
+      <text x="40" y="476" font-size="13" fill="#3A5A75">User stories · acceptance criteria</text>
+    </g>
+    <g>
+      <line x1="200" y1="610" x2="430" y2="630" stroke="#1B3A52" stroke-width="1.2" opacity="0.5"/>
+      <text x="40" y="606" font-weight="700">Documentation</text>
+      <text x="40" y="626" font-size="13" fill="#3A5A75">Architecture · API · audit trails</text>
+    </g>
+    <!-- Right side callouts -->
+    <g>
+      <line x1="1050" y1="320" x2="940" y2="370" stroke="#1B3A52" stroke-width="1.2" opacity="0.5"/>
+      <text x="1060" y="316" font-weight="700">Test strategy &amp; QA</text>
+      <text x="1060" y="336" font-size="13" fill="#3A5A75">Regression · integration</text>
+    </g>
+    <g>
+      <line x1="1050" y1="480" x2="970" y2="500" stroke="#1B3A52" stroke-width="1.2" opacity="0.5"/>
+      <text x="1060" y="476" font-weight="700">CI/CD &amp; SAST</text>
+      <text x="1060" y="496" font-size="13" fill="#3A5A75">Vuln. remediation · gates</text>
+    </g>
+    <g>
+      <line x1="1050" y1="630" x2="930" y2="650" stroke="#1B3A52" stroke-width="1.2" opacity="0.5"/>
+      <text x="1060" y="626" font-weight="700">Compliance &amp; audit</text>
+      <text x="1060" y="646" font-size="13" fill="#3A5A75">DORA · GDPR · LGPD</text>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="640" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#0E2638">The SDLC iceberg: where AI investment usually stops vs where enterprise cost actually lives</text>
+</svg>

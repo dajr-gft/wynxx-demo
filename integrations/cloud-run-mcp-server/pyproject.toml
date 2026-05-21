@@ -1,0 +1,46 @@
+[project]
+name = "wynxx-mcp-server"
+version = "1.0.0"
+description = "Reference MCP server exposing a Wynxx-style enterprise SDLC platform (Path A — Cloud Run)."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+authors = [{ name = "GFT — Google Cloud Practice" }]
+dependencies = [
+    "mcp>=1.12,<2.0",
+    "pydantic>=2.7,<3.0",
+    "pydantic-settings>=2.3,<3.0",
+    "httpx>=0.27,<1.0",
+]
+
+[project.optional-dependencies]
+otel = [
+    "opentelemetry-sdk>=1.27,<2.0",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.27,<2.0",
+]
+dev = [
+    "pytest>=8.0,<9.0",
+    "ruff>=0.6,<1.0",
+]
+
+[project.scripts]
+wynxx-mcp-server = "wynxx_mcp.server:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["wynxx_mcp", "wynxx_mcp.toolsets"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

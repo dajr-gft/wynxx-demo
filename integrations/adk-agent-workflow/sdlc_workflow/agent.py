@@ -63,42 +63,57 @@ if _config.mode is RunMode.REAL:
     from google.adk.tools.mcp_tool.mcp_toolset import McpToolset
     from google.genai import types
 
-    # Every agent shares one toolset — the same Wynxx MCP server (Path A / B).
-    wynxx_tools = McpToolset(
-        connection_params=StreamableHTTPConnectionParams(url=_config.mcp_url),
-    )
+    # Steady function-calling: temperature 0 reduces Gemini MALFORMED_FUNCTION_CALL.
+    _STEADY = types.GenerateContentConfig(temperature=0.0)
+
+    def _toolset(*tool_names: str) -> McpToolset:
+        """A Wynxx MCP toolset scoped to only the given tools (same MCP server).
+
+        Each agent sees only the one tool it needs — "avoid tool bloat / use
+        progressive disclosure" per Google Cloud's agentic-architecture guidance.
+        The minimal function-calling surface also reduces Gemini's
+        MALFORMED_FUNCTION_CALL versus exposing all tools to every agent.
+        """
+        return McpToolset(
+            connection_params=StreamableHTTPConnectionParams(url=_config.mcp_url),
+            tool_filter=list(tool_names),
+        )
 
     # Different models for different roles: Pro for reasoning, Flash for volume.
+    # Each agent is scoped to exactly the one Wynxx tool it should call.
     # `preload_memory` gives the analyst short/long-term Memory (official agentic
-    # component): Vertex AI Agent Engine Sessions + Memory Bank in production, so it
-    # recalls prior assessments of the same repository.
+    # component): Vertex AI Agent Engine Sessions + Memory Bank in production.
     repo_analyst = LlmAgent(
         name="repo_analyst",
         model=_config.model_pro,
         instruction=REPO_ANALYST_INSTRUCTION,
-        tools=[wynxx_tools, preload_memory],
+        tools=[_toolset("analyze_repository"), preload_memory],
         output_key="findings",
+        generate_content_config=_STEADY,
     )
     doc_writer = LlmAgent(
         name="doc_writer",
         model=_config.model_flash,
         instruction=DOC_WRITER_INSTRUCTION,
-        tools=[wynxx_tools],
+        tools=[_toolset("generate_documentation_draft")],
         output_key="docs",
+        generate_content_config=_STEADY,
     )
     test_strategist = LlmAgent(
         name="test_strategist",
         model=_config.model_flash,
         instruction=TEST_STRATEGIST_INSTRUCTION,
-        tools=[wynxx_tools],
+        tools=[_toolset("generate_tests")],
         output_key="tests",
+        generate_content_config=_STEADY,
     )
     modernization_advisor = LlmAgent(
         name="modernization_advisor",
         model=_config.model_pro,
         instruction=MODERNIZATION_ADVISOR_INSTRUCTION,
-        tools=[wynxx_tools],
+        tools=[_toolset("modernization_assessment")],
         output_key="modernization",
+        generate_content_config=_STEADY,
     )
 
     # Fan-out: the three artifact agents run concurrently over the shared findings.
@@ -134,6 +149,7 @@ if _config.mode is RunMode.REAL:
         instruction=REVIEW_PUBLISH_INSTRUCTION,
         before_agent_callback=require_human_approval,
         output_key="published_summary",
+        generate_content_config=_STEADY,
     )
 
     # Fan-in: analyze -> parallel drafts -> human-gated publish.

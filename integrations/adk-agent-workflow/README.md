@@ -24,7 +24,7 @@ MCP server and deployable to Vertex AI Agent Engine.
 | Interaction | Workflow (`SequentialAgent` + `ParallelAgent`) |
 | Pattern | Fan-out / fan-in with a human-in-the-loop gate |
 | Sub-agents | `repo_analyst`, `doc_writer`, `test_strategist`, `modernization_advisor` |
-| Tools | Wynxx MCP server (shared `McpToolset`) |
+| Tools | Wynxx MCP server — each agent scoped to its one tool (`McpToolset` `tool_filter`, per GCP "progressive disclosure / avoid tool bloat") |
 | Models | `gemini-3.1-pro-preview` (reasoning), `gemini-3.5-flash` (volume) — Vertex **global** endpoint |
 
 Three design choices from the article are encoded here:

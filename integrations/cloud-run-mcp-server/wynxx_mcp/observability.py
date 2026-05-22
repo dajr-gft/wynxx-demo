@@ -20,13 +20,34 @@ from .config import Settings
 _LOGGER_NAME = "wynxx_mcp"
 
 
+class _StructuredFormatter(logging.Formatter):
+    """Render each log line as a single Cloud Logging-friendly JSON object.
+
+    Cloud Run promotes a stdout line to ``jsonPayload`` (and reads ``severity``)
+    only when the *entire* line is one JSON object — any prefix forces it to
+    ``textPayload``. So the whole record, including the structured execution
+    fields passed via ``extra={"json_fields": ...}``, is serialised here.
+    """
+
+    def format(self, record: logging.LogRecord) -> str:
+        payload: dict = {
+            "severity": record.levelname,
+            "message": record.getMessage(),
+            "logger": record.name,
+        }
+        fields = getattr(record, "json_fields", None)
+        if fields:
+            payload.update(fields)
+        return json.dumps(payload, default=str, separators=(",", ":"))
+
+
 def configure_logging(settings: Settings) -> logging.Logger:
-    """Configure JSON-friendly stdout logging (picked up by Cloud Logging)."""
+    """Configure structured JSON stdout logging (ingested by Cloud Logging)."""
     logger = logging.getLogger(_LOGGER_NAME)
     if logger.handlers:
         return logger
     handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(logging.Formatter("%(levelname)s %(name)s %(message)s"))
+    handler.setFormatter(_StructuredFormatter())
     logger.addHandler(handler)
     logger.setLevel(settings.log_level.upper())
     logger.propagate = False
@@ -93,5 +114,10 @@ def start_span(name: str) -> Iterator[str]:
 
 
 def log_execution_record(record: dict) -> None:
-    """Emit the execution record as a single structured JSON log line."""
-    get_logger().info(json.dumps(record, default=str, separators=(",", ":")))
+    """Emit the execution record as one structured Cloud Logging line.
+
+    The record fields are merged top-level into the JSON line (via
+    ``json_fields``), so each becomes a queryable ``jsonPayload`` field in
+    Cloud Logging rather than an opaque string.
+    """
+    get_logger().info("tool execution", extra={"json_fields": record})

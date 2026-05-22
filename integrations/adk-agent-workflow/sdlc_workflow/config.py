@@ -37,9 +37,12 @@ class Config(BaseSettings):
     # Wynxx MCP server endpoint (used in real mode).
     mcp_url: str = Field(default="https://wynxx-mcp-server-xxxxx.run.app/mcp")
 
-    # Different models for different roles (article: Pro for reasoning, Flash for volume).
-    model_pro: str = Field(default="gemini-3-pro")
-    model_flash: str = Field(default="gemini-3-flash")
+    # Different models for different roles: Pro for reasoning, Flash for volume.
+    # Gemini 3 (Next '26): Pro is in preview, Flash is GA. Both are served on the
+    # Vertex *global* endpoint — set GOOGLE_CLOUD_LOCATION=global for real mode.
+    # Override per deployment via SDLC_MODEL_PRO / SDLC_MODEL_FLASH.
+    model_pro: str = Field(default="gemini-3.1-pro-preview")
+    model_flash: str = Field(default="gemini-3.5-flash")
 
     # Note: Vertex AI / Agent Engine deploy settings come from the standard
     # GOOGLE_CLOUD_* environment variables (see deployment/deploy.py).

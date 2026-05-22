@@ -53,6 +53,12 @@ Read-only tools carry the `readOnlyHint` annotation; advisory tools are marked
 non-read-only and non-destructive. Agent Gateway and Code Assist use these hints
 to pick the right default approval workflow.
 
+`modernization_assessment` takes a `target_platform`: `cloud_run`, `gke`, or
+**`agent_engine`**. The last returns an *agentic re-platform* assessment — capabilities
+exposed as MCP tools, orchestrated by ADK 2.0 (Gemini 3) on Vertex AI Agent Engine, and
+governed by Agent Gateway / Agent Identity / Model Armor. Try it in `adk web` with
+*"modernize payments-service targeting an agent-based architecture"*.
+
 ## Run it locally
 
 ```bash

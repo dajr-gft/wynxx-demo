@@ -274,7 +274,14 @@ components:
       properties:
         repository_path: { type: string }
         language: { type: string, default: java }
-        target_platform: { type: string, default: cloud_run, enum: [cloud_run, gke] }
+        target_platform:
+          type: string
+          default: cloud_run
+          enum: [cloud_run, gke, agent_engine]
+          description: >-
+            Target architecture. "agent_engine" returns an agentic re-platform
+            (capabilities as MCP tools orchestrated by ADK 2.0 on Vertex AI Agent
+            Engine, governed by Agent Gateway).
 
     GenerateTestsRequest:
       type: object
@@ -367,6 +374,9 @@ components:
         migration_phases: { type: array, items: { $ref: '#/components/schemas/MigrationPhase' } }
         effort_estimate: { type: string }
         recommendation: { type: string }
+        diagram:
+          type: [string, 'null']
+          description: Mermaid source for the target-architecture diagram (when available).
         metadata: { $ref: '#/components/schemas/ExecutionMetadata' }
 
     GeneratedFile:

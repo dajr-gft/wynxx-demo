@@ -41,7 +41,7 @@ async def main() -> None:
     for a in agents:
         print(f"  - {a.name:<22} model={a.model}")
 
-    # All four agents must share the one Wynxx McpToolset (per agent.py).
+    # All four agents share the one Wynxx McpToolset (per agent.py).
     shared = agent.wynxx_tools
     assert all(a.tools[0] is shared for a in agents), "agents must share one toolset"
     print("\nAll four agents share a single Wynxx McpToolset: OK")

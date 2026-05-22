@@ -41,13 +41,16 @@ def test_published_artifacts_match_golden():
 
 
 def test_adk_evalset_when_runtime_available():
-    """Run the ADK evalset when google-adk + Vertex are configured; else skip."""
+    """Run the ADK evalset when google-adk[eval] + Vertex are configured; else skip."""
     evaluator = pytest.importorskip("google.adk.evaluation.agent_evaluator")
     import asyncio
 
-    asyncio.run(
-        evaluator.AgentEvaluator.evaluate(
-            agent_module="sdlc_workflow",
-            eval_dataset_file_path_or_dir=str(DATA / "sdlc_orchestration.evalset.json"),
+    try:
+        asyncio.run(
+            evaluator.AgentEvaluator.evaluate(
+                agent_module="sdlc_workflow",
+                eval_dataset_file_path_or_dir=str(DATA / "sdlc_orchestration.evalset.json"),
+            )
         )
-    )
+    except ModuleNotFoundError as exc:
+        pytest.skip(f"ADK eval extras not installed (pip install 'google-adk[eval]'): {exc}")

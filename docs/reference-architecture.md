@@ -384,28 +384,28 @@ wynxx_tools = McpToolset(
 
 analyst = Agent(
     name="repo_analyst",
-    model="gemini-3-pro",
+    model="gemini-3.1-pro-preview",
     instruction="Analyze the repository and return structured findings.",
     tools=[wynxx_tools],
 )
 
 doc_writer = Agent(
     name="doc_writer",
-    model="gemini-3-flash",
+    model="gemini-3.5-flash",
     instruction="Draft architecture and API documentation based on the analysis.",
     tools=[wynxx_tools],
 )
 
 test_strategist = Agent(
     name="test_strategist",
-    model="gemini-3-flash",
+    model="gemini-3.5-flash",
     instruction="Recommend or draft tests, respecting the coverage target.",
     tools=[wynxx_tools],
 )
 
 modernization_advisor = Agent(
     name="modernization_advisor",
-    model="gemini-3-pro",
+    model="gemini-3.1-pro-preview",
     instruction="Produce a modernization assessment with risks and target architecture.",
     tools=[wynxx_tools],
 )
@@ -451,6 +451,12 @@ sdlc_workflow = Workflow(
     nodes=[analyze, fan_out, document, test, modernize, review_and_publish],
 )
 ```
+
+> The snippet shows the workflow conceptually. The companion code implements it
+> with ADK 2.0's real workflow agents — `SequentialAgent` + `ParallelAgent` from
+> `google.adk.agents`, with the human-in-the-loop gate as a
+> `before_agent_callback` — runnable and deployable to Agent Engine today. See
+> [`integrations/adk-agent-workflow/`](../integrations/adk-agent-workflow/).
 
 Two design choices worth highlighting:
 

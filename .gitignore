@@ -22,3 +22,6 @@ env/
 # Local agent/tooling settings (personal, not shared)
 .claude/settings.local.json
 .gemini/oauth_creds.json
+
+# ADK runtime (adk web session store)
+.adk/

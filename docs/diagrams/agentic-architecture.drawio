@@ -1,0 +1,147 @@
+<mxfile host="app.diagrams.net" agent="wynxx-demo" version="24.0.0">
+  <diagram name="Wynxx x GCP - Agentic Architecture" id="wynxx-agentic">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Wynxx &#215; Google Cloud — Agentic AI Reference Architecture (post Cloud Next &#39;26)" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#202124;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Aligned with cloud.google.com/architecture/choose-agentic-ai-architecture-components. Replace cards with official GCP icons via draw.io: More Shapes → Networking → Google Cloud Platform." style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#5F6368;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1120" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 1: surfaces -->
+        <mxCell id="L1" value="1 · Developer &amp; agent surfaces (front-end)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F3F4;strokeColor=#DADCE0;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fontStyle=1;fontColor=#5F6368;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1120" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="s_cli" value="Gemini CLI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4285F4;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="110" width="340" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="s_ca" value="Gemini Code Assist (Agent Mode)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4285F4;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="420" y="110" width="360" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="s_ge" value="Gemini Enterprise app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4285F4;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="800" y="110" width="360" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 2: governance -->
+        <mxCell id="L2" value="2 · Governance plane — Agent Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F3F4;strokeColor=#DADCE0;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fontStyle=1;fontColor=#5F6368;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="184" width="1120" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="g_id" value="Agent Identity&#10;mTLS + DPoP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#EA4335;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="216" width="255" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="g_ma" value="Model Armor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#EA4335;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="335" y="216" width="255" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="g_iam" value="IAM Deny + IAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#EA4335;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="610" y="216" width="255" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="g_reg" value="Agent Registry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#EA4335;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="885" y="216" width="275" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 3: agent runtime + models -->
+        <mxCell id="L3" value="3 · Agent runtime — Vertex AI Agent Engine (ADK 2.0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F3F4;strokeColor=#DADCE0;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fontStyle=1;fontColor=#5F6368;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="290" width="1120" height="116" as="geometry" />
+        </mxCell>
+        <mxCell id="a_adk" value="ADK 2.0&#10;SequentialAgent / ParallelAgent&#10;+ human-in-the-loop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4285F4;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="322" width="380" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a_pro" value="gemini-3.1-pro-preview&#10;reasoning" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF7E0;strokeColor=#F9AB00;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="460" y="322" width="250" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a_flash" value="gemini-3.5-flash&#10;volume" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF7E0;strokeColor=#F9AB00;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="730" y="322" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a_mem" value="Memory&#10;Agent Engine sessions&#10;+ Memory Bank" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F4EA;strokeColor=#34A853;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="940" y="322" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 4: MCP exposure -->
+        <mxCell id="L4" value="4 · Tools &amp; integration — MCP exposure" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F3F4;strokeColor=#DADCE0;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fontStyle=1;fontColor=#5F6368;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="426" width="1120" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="m_cr" value="Path A · Cloud Run&#10;custom FastMCP server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4285F4;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="180" y="452" width="380" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m_ap" value="Path B · Apigee&#10;MCP proxy + API hub" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4285F4;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="452" width="380" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 5: Wynxx -->
+        <mxCell id="L5" value="5 · Enterprise SDLC engine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F3F4;strokeColor=#DADCE0;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fontStyle=1;fontColor=#5F6368;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="532" width="1120" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="wynxx" value="Wynxx — SDLC tools: analyze · explain · document · modernize · generate_tests · review" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4285F4;strokeColor=#1A73E8;fontColor=#FFFFFF;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="220" y="560" width="760" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 6: observability + foundation -->
+        <mxCell id="L6" value="6 · Observability &amp; foundation  (+ Secret Manager · VPC-SC · Cloud KMS · Security Command Center)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F3F4;strokeColor=#DADCE0;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fontStyle=1;fontColor=#5F6368;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="630" width="1120" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="o_trace" value="Cloud Trace (OpenTelemetry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F4EA;strokeColor=#34A853;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="662" width="300" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="o_audit" value="Cloud Audit Logs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F4EA;strokeColor=#34A853;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="662" width="260" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="o_bq" value="BigQuery Agent Analytics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F4EA;strokeColor=#34A853;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="660" y="662" width="280" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="o_looker" value="Looker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F4EA;strokeColor=#34A853;fontColor=#202124;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="960" y="662" width="200" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="e12" value="MCP / A2A" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5F6368;endArrow=block;fontColor=#5F6368;fontSize=10;" edge="1" parent="1" source="L1" target="L2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" value="governed calls" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5F6368;endArrow=block;fontColor=#5F6368;fontSize=10;" edge="1" parent="1" source="L2" target="L3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e34" value="MCP tool calls" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5F6368;endArrow=block;fontColor=#5F6368;fontSize=10;" edge="1" parent="1" source="L3" target="L4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e45" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5F6368;endArrow=block;" edge="1" parent="1" source="L4" target="L5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e36" value="OTel + audit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5F6368;endArrow=block;dashed=1;fontColor=#5F6368;fontSize=10;exitX=1;exitY=0.5;entryX=1;entryY=0;" edge="1" parent="1" source="L3" target="L6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Legend: official GCP product icons (best-effort stencils; if a glyph is blank, drag the icon from More Shapes > Networking > Google Cloud Platform) -->
+        <mxCell id="LEG" value="Key Google Cloud products (official icons)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DADCE0;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fontColor=#5F6368;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="736" width="1120" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="i_cr" value="Cloud Run" style="sketch=0;outlineConnect=0;fontColor=#202124;gradientColor=none;fillColor=#4285F4;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;shape=mxgraph.gcp2.cloud_run;" vertex="1" parent="1">
+          <mxGeometry x="70" y="770" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="i_ap" value="Apigee" style="sketch=0;outlineConnect=0;fontColor=#202124;gradientColor=none;fillColor=#4285F4;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;shape=mxgraph.gcp2.apigee;" vertex="1" parent="1">
+          <mxGeometry x="205" y="770" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="i_bq" value="BigQuery" style="sketch=0;outlineConnect=0;fontColor=#202124;gradientColor=none;fillColor=#4285F4;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;shape=mxgraph.gcp2.bigquery;" vertex="1" parent="1">
+          <mxGeometry x="340" y="770" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="i_vai" value="Vertex AI" style="sketch=0;outlineConnect=0;fontColor=#202124;gradientColor=none;fillColor=#4285F4;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;shape=mxgraph.gcp2.ai_platform;" vertex="1" parent="1">
+          <mxGeometry x="475" y="770" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="i_iam" value="Cloud IAM" style="sketch=0;outlineConnect=0;fontColor=#202124;gradientColor=none;fillColor=#4285F4;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;shape=mxgraph.gcp2.cloud_iam;" vertex="1" parent="1">
+          <mxGeometry x="610" y="770" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="i_sm" value="Secret Manager" style="sketch=0;outlineConnect=0;fontColor=#202124;gradientColor=none;fillColor=#4285F4;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;shape=mxgraph.gcp2.secret_manager;" vertex="1" parent="1">
+          <mxGeometry x="745" y="770" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="i_tr" value="Cloud Trace" style="sketch=0;outlineConnect=0;fontColor=#202124;gradientColor=none;fillColor=#4285F4;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;shape=mxgraph.gcp2.trace;" vertex="1" parent="1">
+          <mxGeometry x="880" y="770" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="i_lk" value="Looker" style="sketch=0;outlineConnect=0;fontColor=#202124;gradientColor=none;fillColor=#4285F4;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;shape=mxgraph.gcp2.looker;" vertex="1" parent="1">
+          <mxGeometry x="1015" y="770" width="60" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

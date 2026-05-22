@@ -162,6 +162,10 @@ class ModernizationAssessment(BaseModel):
     migration_phases: list[MigrationPhase] = Field(default_factory=list)
     effort_estimate: str
     recommendation: str
+    diagram: str | None = Field(
+        default=None,
+        description="Mermaid source for the target-architecture diagram (when available).",
+    )
     metadata: ExecutionMetadata
 
 

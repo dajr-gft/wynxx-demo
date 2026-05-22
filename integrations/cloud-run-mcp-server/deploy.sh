@@ -24,13 +24,20 @@ echo ">> Deploying ${SERVICE_NAME} to ${REGION} (project ${PROJECT_ID}, mode=${W
 #   --project="${PROJECT_ID}" \
 #   --display-name="Wynxx MCP server"
 
+# Build the env-var list; in real mode forward the live backend endpoint.
+ENV_VARS="WYNXX_MODE=${WYNXX_MODE},WYNXX_MCP_SERVER_ID=wynxx-sdlc"
+if [[ "${WYNXX_MODE}" == "real" ]]; then
+  : "${WYNXX_BACKEND_URL:?WYNXX_MODE=real requires WYNXX_BACKEND_URL}"
+  ENV_VARS="${ENV_VARS},WYNXX_BACKEND_URL=${WYNXX_BACKEND_URL}"
+fi
+
 gcloud run deploy "${SERVICE_NAME}" \
   --project="${PROJECT_ID}" \
   --source . \
   --region "${REGION}" \
   --no-allow-unauthenticated \
   --service-account "${SERVICE_ACCOUNT}" \
-  --set-env-vars "WYNXX_MODE=${WYNXX_MODE},WYNXX_MCP_SERVER_ID=wynxx-sdlc" \
+  --set-env-vars "${ENV_VARS}" \
   --port 8080
 
 echo

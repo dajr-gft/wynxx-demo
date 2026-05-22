@@ -3,3 +3,7 @@
 #
 # Enable with SDLC_MODE=real after installing.
 google-adk>=2.0
+
+# ADK's McpToolset needs the MCP client library. It is not always pulled in
+# transitively by google-adk, so pin it explicitly for real mode.
+mcp>=1.0,<2.0

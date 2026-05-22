@@ -30,6 +30,32 @@ def test_stub_backend_rejects_unknown_tool():
         StubBackend().invoke("delete_everything", {})
 
 
+def test_modernization_target_cloud_run_is_containerization():
+    result = StubBackend().invoke(
+        "modernization_assessment",
+        {"repository_path": "payments-service", "target_platform": "cloud_run"},
+    )
+    assert "Containerized service" in result["target_architecture"]
+    assert any(ph["name"] == "Containerize" for ph in result["migration_phases"])
+    assert result.get("diagram") is None  # only the agentic target ships a diagram
+
+
+def test_modernization_target_agent_engine_is_agentic():
+    result = StubBackend().invoke(
+        "modernization_assessment",
+        {"repository_path": "payments-service", "target_platform": "agent_engine"},
+    )
+    # Agentic re-platform, not a container lift-and-shift.
+    assert "Agent Engine" in result["target_architecture"]
+    assert "MCP" in result["target_architecture"]
+    phases = {ph["name"] for ph in result["migration_phases"]}
+    assert {"Expose as MCP tools", "Deploy to Agent Engine"} <= phases
+    assert "re-architecture" in result["effort_estimate"]
+    # Ships a curated Mermaid diagram for rendering in adk web / Agent Engine.
+    assert result["diagram"] and "flowchart" in result["diagram"]
+    assert "Agent Engine" in result["diagram"]
+
+
 def test_build_backend_defaults_to_stub():
     backend = build_backend(get_settings())
     assert isinstance(backend, StubBackend)

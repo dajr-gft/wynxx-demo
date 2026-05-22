@@ -27,6 +27,7 @@ def register_read_only(mcp: FastMCP, backend: WynxxBackend) -> None:
             title="Analyze repository",
             readOnlyHint=True,
             destructiveHint=False,
+            idempotentHint=True,
             openWorldHint=False,
         )
     )
@@ -60,6 +61,7 @@ def register_read_only(mcp: FastMCP, backend: WynxxBackend) -> None:
             title="Explain code",
             readOnlyHint=True,
             destructiveHint=False,
+            idempotentHint=True,
             openWorldHint=False,
         )
     )
@@ -101,6 +103,7 @@ def register_read_only(mcp: FastMCP, backend: WynxxBackend) -> None:
             title="Generate documentation draft",
             readOnlyHint=True,
             destructiveHint=False,
+            idempotentHint=True,
             openWorldHint=False,
         )
     )

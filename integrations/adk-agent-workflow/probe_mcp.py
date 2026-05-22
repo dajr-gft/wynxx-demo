@@ -14,25 +14,28 @@ URL = "http://127.0.0.1:8080/mcp"
 
 
 async def main() -> None:
-    async with streamablehttp_client(URL) as (read, write, _):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
+    async with (
+        streamablehttp_client(URL) as (read, write, _),
+        ClientSession(read, write) as session,
+    ):
+        await session.initialize()
 
-            tools = (await session.list_tools()).tools
-            print(f"Discovered {len(tools)} Wynxx tools:")
-            for t in tools:
-                ro = (t.annotations.readOnlyHint if t.annotations else None)
-                print(f"  - {t.name:<28} readOnly={ro}")
+        tools = (await session.list_tools()).tools
+        print(f"Discovered {len(tools)} Wynxx tools:")
+        for t in tools:
+            ro = t.annotations.readOnlyHint if t.annotations else None
+            print(f"  - {t.name:<28} readOnly={ro}")
 
-            print("\nCalling analyze_repository(payments-service)...")
-            result = await session.call_tool(
-                "analyze_repository",
-                {"repository_path": "payments-service", "language": "java"},
-            )
-            payload = result.structuredContent or {}
-            # Trim to the interesting fields for a readable proof.
-            keys = [k for k in ("repository_path", "language", "summary", "findings") if k in payload]
-            print(json.dumps({k: payload[k] for k in keys}, indent=2)[:900])
+        print("\nCalling analyze_repository(payments-service)...")
+        result = await session.call_tool(
+            "analyze_repository",
+            {"repository_path": "payments-service", "language": "java"},
+        )
+        payload = result.structuredContent or {}
+        # Trim to the interesting fields for a readable proof.
+        wanted = ("repository_path", "language", "summary", "findings")
+        keys = [k for k in wanted if k in payload]
+        print(json.dumps({k: payload[k] for k in keys}, indent=2)[:900])
 
 
 if __name__ == "__main__":

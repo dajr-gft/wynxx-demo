@@ -34,6 +34,10 @@ import argparse
 import os
 import sys
 
+# Agent Engine deploys the real ADK orchestration; ensure agent.py builds the
+# SequentialAgent/ParallelAgent graph (not the offline stub) on import.
+os.environ.setdefault("SDLC_MODE", "real")
+
 
 def _init_vertex() -> tuple[str, str, str]:
     project = os.environ.get("GOOGLE_CLOUD_PROJECT")
@@ -65,6 +69,7 @@ def create() -> None:
         description="ADK 2.0 graph workflow over the Wynxx MCP server.",
         requirements=[
             "google-adk>=2.0",
+            "mcp>=1.0,<2.0",
             "pydantic>=2.7,<3.0",
             "pydantic-settings>=2.3,<3.0",
         ],

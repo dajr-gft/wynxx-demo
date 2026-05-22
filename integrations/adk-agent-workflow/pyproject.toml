@@ -11,7 +11,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-real = ["google-adk>=2.0"]
+# google-adk does not always pull the MCP client in transitively; McpToolset
+# needs it, so pin it explicitly for real mode.
+real = ["google-adk>=2.0", "mcp>=1.0,<2.0"]
 dev = ["pytest>=8.0,<9.0", "ruff>=0.6,<1.0"]
 
 [build-system]

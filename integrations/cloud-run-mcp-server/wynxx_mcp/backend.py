@@ -188,6 +188,10 @@ class StubBackend:
 
     def _modernization_assessment(self, p: dict[str, Any]) -> dict[str, Any]:
         target = p.get("target_platform", "cloud_run")
+        # An agent-based target re-architects the service into governed MCP tools
+        # orchestrated by ADK agents on Agent Engine — not a container lift-and-shift.
+        if target in ("agent_engine", "agentic", "agents"):
+            return self._modernization_agentic()
         return {
             "current_state": "Monolithic Spring Boot service deployed on a VM with a "
             "co-located relational database.",
@@ -229,6 +233,155 @@ class StubBackend:
             "effort_estimate": "4–6 person-weeks",
             "recommendation": "Proceed with a phased migration to Cloud Run; address "
             "secret management first.",
+        }
+
+    def _modernization_agentic(self) -> dict[str, Any]:
+        """Re-platform to an agentic architecture on the post-Next '26 GCP stack.
+
+        Target: business capabilities exposed as governed MCP tools, orchestrated by
+        ADK 2.0 agents (Gemini 3) on Vertex AI Agent Engine, governed end-to-end by
+        Agent Gateway / Agent Identity / Agent Registry / Model Armor.
+        """
+        return {
+            "current_state": "Monolithic Spring Boot service on a VM with a co-located "
+            "database; capabilities are reachable only through a synchronous REST API, "
+            "with no machine-discoverable tool contract for agents.",
+            "target_architecture": (
+                "Agentic re-platform on Google Cloud (post-Next '26). Expose the "
+                "service's capabilities as Model Context Protocol (MCP) tools and "
+                "orchestrate them with Agent Development Kit (ADK) 2.0 — Gemini 3.1 Pro "
+                "(preview) for reasoning and Gemini 3.5 Flash for high-volume steps, on "
+                "the Vertex AI global endpoint — running on Vertex AI Agent Engine. "
+                "Publish the tools via a custom MCP server on Cloud Run or an Apigee MCP "
+                "proxy over the existing REST API. Front every call with Agent Gateway "
+                "(Agent Identity mTLS + DPoP, IAM Deny/IAP, Model Armor), discover them "
+                "through Agent Registry, and emit Cloud Audit Logs + OpenTelemetry with "
+                "BigQuery Agent Analytics for engineering intelligence. Vertex AI Model "
+                "Garden keeps the design model-agnostic (Gemini 3, Claude, Llama, Gemma)."
+            ),
+            "findings": [
+                {
+                    "title": "Capabilities are not agent-consumable",
+                    "detail": "A REST API exists, but there is no MCP tool contract, so "
+                    "agents and Gemini surfaces (CLI, Code Assist, Gemini Enterprise) "
+                    "cannot discover or call the service.",
+                    "severity": "medium",
+                    "category": "modernization",
+                },
+                {
+                    "title": "Apigee MCP shortcut available",
+                    "detail": "The existing REST API can be published as governed MCP "
+                    "tools through an Apigee MCP proxy with no code change.",
+                    "severity": "info",
+                    "category": "modernization",
+                },
+                {
+                    "title": "Deterministic workflow fit",
+                    "detail": "The order flow is a deterministic graph — a fit for ADK "
+                    "SequentialAgent/ParallelAgent with human-in-the-loop gates rather "
+                    "than a free-form agent loop.",
+                    "severity": "info",
+                    "category": "architecture",
+                },
+            ],
+            "risks": [
+                {
+                    "title": "Prompt injection / tool poisoning",
+                    "detail": "Agent-reachable tools must treat external content as "
+                    "adversarial: enforce Model Armor at Agent Gateway and start with a "
+                    "read-only toolset.",
+                    "severity": "high",
+                    "category": "security",
+                },
+                {
+                    "title": "Embedded credentials",
+                    "detail": "Move datasource secrets to Secret Manager before exposing "
+                    "capabilities to agents.",
+                    "severity": "high",
+                    "category": "security",
+                },
+                {
+                    "title": "Non-determinism, latency and cost",
+                    "detail": "Gate action-oriented tools behind human approval; route "
+                    "high-volume steps to Gemini 3.5 Flash and reserve Gemini 3.1 Pro for "
+                    "reasoning.",
+                    "severity": "medium",
+                    "category": "operations",
+                },
+            ],
+            "migration_phases": [
+                {
+                    "name": "Expose as MCP tools",
+                    "objective": "Publish read-only capabilities as an MCP toolset "
+                    "(Cloud Run FastMCP server or Apigee MCP proxy).",
+                    "effort": "M",
+                },
+                {
+                    "name": "Orchestrate with ADK 2.0",
+                    "objective": "Wrap the tools in ADK agents "
+                    "(SequentialAgent/ParallelAgent) with human-in-the-loop gates.",
+                    "effort": "M",
+                },
+                {
+                    "name": "Govern",
+                    "objective": "Register in Agent Registry; enforce Agent Identity, "
+                    "IAM Deny/IAP, and Model Armor at Agent Gateway.",
+                    "effort": "S",
+                },
+                {
+                    "name": "Deploy to Agent Engine",
+                    "objective": "Run on Vertex AI Agent Engine with OpenTelemetry "
+                    "tracing and egress through Agent Gateway.",
+                    "effort": "M",
+                },
+                {
+                    "name": "Observe & federate",
+                    "objective": "Stream telemetry to BigQuery Agent Analytics + Looker; "
+                    "federate specialised agents over A2A v1.0.",
+                    "effort": "S",
+                },
+            ],
+            "effort_estimate": "8–12 person-weeks (re-architecture, not a lift-and-shift)",
+            "recommendation": (
+                "Adopt a phased agentic re-platform on Vertex AI Agent Engine: expose "
+                "capabilities as MCP tools (start read-only), orchestrate with ADK 2.0 "
+                "using Gemini 3, and govern every call through Agent Gateway with Agent "
+                "Identity and Model Armor. Prefer the Apigee MCP proxy when the REST API "
+                "is stable; choose a custom Cloud Run MCP server when you need "
+                "orchestration logic. Keep humans in the loop for action-oriented tools "
+                "until you have a track record."
+            ),
+            # Curated, validated Mermaid (raw source) — a high-quality, layered cloud
+            # diagram using the Google Cloud colour palette. The agent renders it inside
+            # a ```mermaid fenced block, which Agent Engine / adk web draws as a diagram.
+            "diagram": (
+                "flowchart LR\n"
+                "  classDef svc fill:#E8F0FE,stroke:#4285F4,stroke-width:1px,color:#202124\n"
+                "  classDef model fill:#FEF7E0,stroke:#F9AB00,stroke-width:1px,color:#202124\n"
+                "  classDef gov fill:#FCE8E6,stroke:#EA4335,stroke-width:1px,color:#202124\n"
+                "  classDef data fill:#E6F4EA,stroke:#34A853,stroke-width:1px,color:#202124\n"
+                '  APP["payments-service<br/>Spring Boot · VM"]:::svc\n'
+                '  subgraph EXP["1 — Expose as MCP tools"]\n'
+                "    direction TB\n"
+                '    CR["Cloud Run · FastMCP<br/>Path A"]:::svc\n'
+                '    AP["Apigee · MCP proxy<br/>Path B"]:::svc\n'
+                "  end\n"
+                '  subgraph ORCH["2 — Vertex AI Agent Engine · ADK 2.0"]\n'
+                "    direction TB\n"
+                '    AGT["SequentialAgent / ParallelAgent<br/>+ human-in-the-loop"]:::svc\n'
+                '    PRO["gemini-3.1-pro-preview<br/>reasoning"]:::model\n'
+                '    FL["gemini-3.5-flash<br/>volume"]:::model\n'
+                "  end\n"
+                '  subgraph GOV["3 — Agent Gateway"]\n'
+                "    direction TB\n"
+                '    SEC["Agent Identity (mTLS+DPoP)<br/>Model Armor · IAM/IAP · Registry"]:::gov\n'
+                "  end\n"
+                '  OBS["BigQuery Agent Analytics<br/>+ Looker"]:::data\n'
+                "  APP --> EXP\n"
+                "  EXP -->|MCP| ORCH\n"
+                "  GOV <-->|every call| ORCH\n"
+                "  ORCH -->|OTel + audit| OBS\n"
+            ),
         }
 
     def _generate_tests(self, p: dict[str, Any]) -> dict[str, Any]:

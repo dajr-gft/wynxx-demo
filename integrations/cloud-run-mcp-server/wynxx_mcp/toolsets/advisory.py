@@ -41,7 +41,10 @@ def register_advisory(mcp: FastMCP, backend: WynxxBackend) -> None:
         Args:
             repository_path: Path or identifier of the repository.
             language: Primary language of the repository.
-            target_platform: Target runtime, e.g. "cloud_run" or "gke".
+            target_platform: Target architecture: "cloud_run", "gke", or
+                "agent_engine" — the last returns an agentic re-platform onto
+                Vertex AI Agent Engine (capabilities as MCP tools orchestrated by
+                ADK 2.0, governed by Agent Gateway).
         """
         with tool_execution("modernization_assessment") as ctx:
             domain = backend.invoke(

@@ -58,6 +58,7 @@ if _config.mode is RunMode.REAL:
     # -----------------------------------------------------------------------
     from google.adk.agents import LlmAgent, ParallelAgent, SequentialAgent
     from google.adk.agents.callback_context import CallbackContext
+    from google.adk.models.google_llm import Gemini
     from google.adk.tools import preload_memory
     from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
     from google.adk.tools.mcp_tool.mcp_toolset import McpToolset
@@ -65,6 +66,35 @@ if _config.mode is RunMode.REAL:
 
     # Steady function-calling: temperature 0 reduces Gemini MALFORMED_FUNCTION_CALL.
     _STEADY = types.GenerateContentConfig(temperature=0.0)
+
+    _MAX_MALFORMED_RETRIES = 2
+
+    class _RetryingGemini(Gemini):
+        """Gemini that retries a turn returning MALFORMED_FUNCTION_CALL.
+
+        Preview models intermittently emit a malformed function call on large
+        tool turns; the failure is transient, so re-running the same turn almost
+        always succeeds. Responses are buffered per turn, so a malformed turn is
+        discarded and retried before anything reaches the runner.
+        """
+
+        async def generate_content_async(self, llm_request, stream=False):
+            for attempt in range(_MAX_MALFORMED_RETRIES + 1):
+                buffered, malformed = [], False
+                async for resp in super().generate_content_async(
+                    llm_request, stream=stream
+                ):
+                    buffered.append(resp)
+                    if resp.finish_reason == types.FinishReason.MALFORMED_FUNCTION_CALL:
+                        malformed = True
+                if not malformed or attempt == _MAX_MALFORMED_RETRIES:
+                    for resp in buffered:
+                        yield resp
+                    return
+
+    # Pro for reasoning, Flash for volume — both with automatic MALFORMED retry.
+    _pro_model = _RetryingGemini(model=_config.model_pro)
+    _flash_model = _RetryingGemini(model=_config.model_flash)
 
     def _toolset(*tool_names: str) -> McpToolset:
         """A Wynxx MCP toolset scoped to only the given tools (same MCP server).
@@ -85,7 +115,7 @@ if _config.mode is RunMode.REAL:
     # component): Vertex AI Agent Engine Sessions + Memory Bank in production.
     repo_analyst = LlmAgent(
         name="repo_analyst",
-        model=_config.model_pro,
+        model=_pro_model,
         instruction=REPO_ANALYST_INSTRUCTION,
         tools=[_toolset("analyze_repository"), preload_memory],
         output_key="findings",
@@ -93,7 +123,7 @@ if _config.mode is RunMode.REAL:
     )
     doc_writer = LlmAgent(
         name="doc_writer",
-        model=_config.model_flash,
+        model=_flash_model,
         instruction=DOC_WRITER_INSTRUCTION,
         tools=[_toolset("generate_documentation_draft")],
         output_key="docs",
@@ -101,7 +131,7 @@ if _config.mode is RunMode.REAL:
     )
     test_strategist = LlmAgent(
         name="test_strategist",
-        model=_config.model_flash,
+        model=_flash_model,
         instruction=TEST_STRATEGIST_INSTRUCTION,
         tools=[_toolset("generate_tests")],
         output_key="tests",
@@ -109,7 +139,7 @@ if _config.mode is RunMode.REAL:
     )
     modernization_advisor = LlmAgent(
         name="modernization_advisor",
-        model=_config.model_pro,
+        model=_pro_model,
         instruction=MODERNIZATION_ADVISOR_INSTRUCTION,
         tools=[_toolset("modernization_assessment")],
         output_key="modernization",
@@ -145,7 +175,7 @@ if _config.mode is RunMode.REAL:
 
     review_and_publish = LlmAgent(
         name="review_and_publish",
-        model=_config.model_flash,
+        model=_flash_model,
         instruction=REVIEW_PUBLISH_INSTRUCTION,
         before_agent_callback=require_human_approval,
         output_key="published_summary",

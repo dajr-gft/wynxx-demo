@@ -25,3 +25,10 @@ env/
 
 # ADK runtime (adk web session store)
 .adk/
+
+# CLI tool dirs (local, not shared)
+.claude/
+
+# External/embedded clones explored locally (not part of this repo)
+wynxx-agent-code-gen/
+samples/

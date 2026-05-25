@@ -1,0 +1,8 @@
+[project]
+name = "beachshirts-adk"
+version = "0.1.0"
+description = "Beachshirts legacy app modernized as a Google ADK 2.0 multi-agent system"
+requires-python = ">=3.10"
+dependencies = [
+    "google-adk>=2.0.0",
+]
